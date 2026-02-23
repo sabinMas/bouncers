@@ -9,6 +9,10 @@
 
 #include "bn_sprite_items_dot.h"
 
+//trying to add the background image
+#include "bn_regular_bg_items_bgimage.h"
+#include <bn_regular_bg_ptr.h>
+
 // Set max/min x position to be the edges of the display
 static constexpr int HALF_SCREEN_WIDTH = bn::display::width() / 2;
 static constexpr bn::fixed MIN_X = -HALF_SCREEN_WIDTH;
@@ -31,6 +35,17 @@ public:
     bn::sprite_ptr sprite = bn::sprite_items::dot.create_sprite();
     bn::fixed x_speed = BASE_SPEED;
     bn::fixed y_speed = BASE_SPEED;
+
+    Bouncer(bn::random &rng)
+    {
+        x_speed = rng.get_fixed(1, 4);
+        y_speed = rng.get_fixed(1, 4);
+
+        if (rng.get_int(2) == 0)
+            x_speed *= -1;
+        if (rng.get_int(2) == 0)
+            y_speed *= -1;
+    }
 
     void update()
     {
@@ -94,12 +109,20 @@ bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
     return x_average;
 }
 
-void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
+// void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
+// {
+//     // Only add if we're below the maximum
+//     if (bouncers.size() < bouncers.max_size())
+//     {
+//         bouncers.push_back(Bouncer());
+//     }
+// }
+// random bouncer instance generator, takes a random number generator and randomizes speed and direction
+void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers, bn::random &rng)
 {
-    // Only add if we're below the maximum
     if (bouncers.size() < bouncers.max_size())
     {
-        bouncers.push_back(Bouncer());
+        bouncers.push_back(Bouncer(rng));
     }
 }
 
@@ -107,14 +130,20 @@ int main()
 {
     bn::core::init();
 
+    // instance for randomization
+    bn::random rng;
+
+    // bg image
+    bn::regular_bg_ptr bg = bn::regular_bg_items::bgimage.create_bg(0, 0);
+
     bn::vector<Bouncer, MAX_BOUNCERS> bouncers = {};
 
     while (true)
     {
-        // if A is pressed add a new bouncer
+        // if A is pressed add a new bouncer and rng to randomize
         if (bn::keypad::a_pressed())
         {
-            add_bouncer(bouncers);
+            add_bouncer(bouncers, rng);
         }
 
         // if B is pressed print the average to the console
