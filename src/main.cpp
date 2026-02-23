@@ -9,7 +9,7 @@
 
 #include "bn_sprite_items_dot.h"
 
-//trying to add the background image
+// trying to add the background image
 #include "bn_regular_bg_items_bgimage.h"
 #include <bn_regular_bg_ptr.h>
 
@@ -117,6 +117,7 @@ bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 //         bouncers.push_back(Bouncer());
 //     }
 // }
+// page won't publish
 // random bouncer instance generator, takes a random number generator and randomizes speed and direction
 void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers, bn::random &rng)
 {
