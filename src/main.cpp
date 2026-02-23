@@ -26,47 +26,48 @@ public:
     bn::sprite_ptr sprite = bn::sprite_items::dot.create_sprite();
     bn::fixed x_speed = BASE_SPEED;
 
-    void update(){
-        {bn::fixed x = sprite.x();
-
-    // Update x position by adding speed
-    x += x_speed;
-
-    // If we've gone off the screen on the right
-    if (x > MAX_X)
+    void update()
     {
-        // Snap back to screen and reverse direction
-        x = MAX_X;
-        x_speed *= -1;
-    }
-    // If we've gone off the screen on the left
-    if (x < MIN_X)
-    {
-        // Snap back to screen and reverse direction
-        x = MIN_X;
-        x_speed *= -1;
-    }
+        bn::fixed x = sprite.x();
 
-    sprite.set_x(x);
-}
-}
-;
+        // Update x position by adding speed
+        x += x_speed;
 
-bn::fixed average_x(bn::vector<bn::sprite_ptr, MAX_BOUNCERS> &sprites)
+        // If we've gone off the screen on the right
+        if (x > MAX_X)
+        {
+            // Snap back to screen and reverse direction
+            x = MAX_X;
+            x_speed *= -1;
+        }
+        // If we've gone off the screen on the left
+        if (x < MIN_X)
+        {
+            // Snap back to screen and reverse direction
+            x = MIN_X;
+            x_speed *= -1;
+        }
+
+        sprite.set_x(x);
+    }
+};
+
+// Now takes a vector of Bouncer instead of sprites
+bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 {
     bn::fixed x_sum = 0;
-    for (bn::sprite_ptr sprite : sprites)
+    for (Bouncer &bouncer : bouncers)
     {
-        x_sum += sprite.x();
+        x_sum += bouncer.sprite.x();
     }
 
     bn::fixed x_average = x_sum;
 
     // Only divide if we have 1 or more
-    // Prevents division by 0S
-    if (sprites.size() > 0)
+    // Prevents division by 0
+    if (bouncers.size() > 0)
     {
-        x_average /= sprites.size();
+        x_average /= bouncers.size();
     }
     return x_average;
 }
@@ -84,9 +85,6 @@ int main()
 {
     bn::core::init();
 
-    // Sprites and x speeds of bouncers
-    // Items with the same index correspond to each other
-
     bn::vector<Bouncer, MAX_BOUNCERS> bouncers = {};
 
     while (true)
@@ -100,9 +98,10 @@ int main()
         // if B is pressed print the average to the console
         if (bn::keypad::b_pressed())
         {
-            // Add all x positions together
-            // BN_LOG("Average x: ", average);
+            bn::fixed average = average_x(bouncers);
+            BN_LOG("Average x: ", average);
         }
+
         // for each bouncer
         for (Bouncer &bouncer : bouncers)
         {
@@ -112,5 +111,3 @@ int main()
         bn::core::update();
     }
 }
-}
-;
